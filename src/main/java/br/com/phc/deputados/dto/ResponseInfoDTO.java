@@ -25,7 +25,7 @@ public class ResponseInfoDTO implements Serializable {
 	private BigDecimal valorTotalGasto;
 	private BigDecimal valorTotalGastoPartido;
 	private BigDecimal valorTotalGastoDeputado;
+	private BigDecimal valorMedioGastoDiario;
 	
-	private List<Despesa> despesasPartido;
-	private List<Despesa> despesasDeputado;
+	private List<Despesa> despesasInvalidas;
 }

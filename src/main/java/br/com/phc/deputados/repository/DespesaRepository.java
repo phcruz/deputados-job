@@ -1,6 +1,8 @@
 package br.com.phc.deputados.repository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +17,7 @@ import br.com.phc.deputados.model.Despesa;
 public interface DespesaRepository extends JpaRepository<Despesa, Long>{
 
 	@Query(name = "obtem_valor_total_gasto",
-			value = "SELECT sum(valor_documento) as total FROM DESPESA",
+			value = "SELECT SUM(VALOR_DOCUMENTO) AS TOTAL FROM DESPESA",
 			nativeQuery = true)
 	public BigDecimal obtemTotalGasto();
 	
@@ -56,4 +58,20 @@ public interface DespesaRepository extends JpaRepository<Despesa, Long>{
 					")",
 			nativeQuery = true)
 	public Page<Despesa> listaGastoDeputado(@Param("nome") String nome, Pageable pageable);
+	
+	@Query(name = "obtem_menor_data_documento_despesa",
+			value = "SELECT MIN(DATA_DOCUMENTO) FROM DESPESA ",
+			nativeQuery = true)
+	public LocalDate getMinDataDocumento();
+	
+	@Query(name = "obtem_valor_medio_gasto_diario",
+			value = "SELECT ROUND(SUM(VALOR_DOCUMENTO) / :quantidadeDias, 2) FROM DESPESA",
+			nativeQuery = true)
+	public BigDecimal obtemValorMedioGastoDiario(@Param("quantidadeDias") Long quantidadeDias);
+
+	@Query(name = "obtem_despesas_data_invalida",
+			value = "SELECT * FROM DESPESA " + 
+					"WHERE DATA_DOCUMENTO > CURRENT_DATE",
+			nativeQuery = true)
+	public List<Despesa> listaDespesasDataInvalida();
 }
