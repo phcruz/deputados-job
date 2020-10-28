@@ -1,6 +1,9 @@
 package br.com.phc.deputados.service;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -15,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import br.com.phc.deputados.dto.DespesaResponseDTO;
 import br.com.phc.deputados.dto.ResponseInfoDTO;
+import br.com.phc.deputados.exception.BadRequestException;
 import br.com.phc.deputados.model.Despesa;
 import br.com.phc.deputados.repository.DespesaRepository;
 
@@ -50,6 +54,9 @@ public class DespesaService {
 	}
 
 	public Despesa obterDespesa(Long id) {
+		if (Objects.isNull(id))
+			throw new BadRequestException("É obrigatório o envio do id para essa consulta.");
+
 		Optional<Despesa> optionalDespesa = despesaRepository.findById(id);
 		return optionalDespesa.isPresent() ? optionalDespesa.get() : null;
 	}
@@ -60,26 +67,54 @@ public class DespesaService {
 
 		return dto;
 	}
-	
+
 	public ResponseInfoDTO buscaValorTotalGastoPartido(String partido) {
+		if (Objects.isNull(partido))
+			throw new BadRequestException("É obrigatório o envio do partido para essa consulta.");
+
 		ResponseInfoDTO dto = new ResponseInfoDTO();
 		dto.setValorTotalGastoPartido(despesaRepository.obtemTotalGastoPartido(partido));
 
 		return dto;
 	}
-	
+
 	public ResponseInfoDTO buscaValorTotalGastoDeputado(String nome) {
+		if (Objects.isNull(nome))
+			throw new BadRequestException("É obrigatório o envio do nome do deputado para essa consulta.");
+
 		ResponseInfoDTO dto = new ResponseInfoDTO();
 		dto.setValorTotalGastoDeputado(despesaRepository.obtemTotalGastoDeputado(nome));
 
 		return dto;
 	}
-	
+
 	public Page<Despesa> listaGastoPartido(String partido, Pageable pagina) {
+		if (Objects.isNull(partido))
+			throw new BadRequestException("É obrigatório o envio do partido para essa consulta.");
+
 		return despesaRepository.listaGastoPartido(partido, pagina);
 	}
-	
+
 	public Page<Despesa> listaGastoDeputado(String nome, Pageable pagina) {
+		if (Objects.isNull(nome))
+			throw new BadRequestException("É obrigatório o envio do nome do deputado para essa consulta.");
 		return despesaRepository.listaGastoDeputado(nome, pagina);
+	}
+
+	public ResponseInfoDTO buscaValorMedioGastoDeputados() {
+		LocalDate minDate = despesaRepository.getMinDataDocumento();
+		Long quantidadeDias = ChronoUnit.DAYS.between(minDate, LocalDate.now());
+
+		ResponseInfoDTO dto = new ResponseInfoDTO();
+		dto.setValorMedioGastoDiario(despesaRepository.obtemValorMedioGastoDiario(quantidadeDias));
+
+		return dto;
+	}
+
+	public ResponseInfoDTO listaDespesasDataInvalida() {
+		ResponseInfoDTO dto = new ResponseInfoDTO();
+		dto.setDespesasInvalidas(despesaRepository.listaDespesasDataInvalida());
+		
+		return dto;
 	}
 }

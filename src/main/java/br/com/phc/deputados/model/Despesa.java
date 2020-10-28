@@ -14,6 +14,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import br.com.phc.deputados.util.CustomDateDeserializer;
+import br.com.phc.deputados.util.CustomDateSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,56 +40,59 @@ public class Despesa implements Serializable {
 
 	@Column(name = "ano")
 	private Integer ano;
-	
+
 	@Column(name = "mes")
 	private Integer mes;
-	
+
 	@Column(name = "tipo_despesa")
 	private String tipoDespesa;
-	
+
 	@Column(name = "cod_documento")
 	private Long codDocumento;
-	
+
 	@Column(name = "tipo_documento")
 	private String tipoDocumento;
-	
+
 	@Column(name = "cod_tipo_documento")
 	private Integer codTipoDocumento;
-	
+
+	@JsonSerialize(using = CustomDateSerializer.class)
+	@JsonDeserialize(using = CustomDateDeserializer.class)
 	@Column(name = "data_documento")
 	@Temporal(TemporalType.DATE)
 	private Date dataDocumento;
-	
+
 	@Column(name = "num_documento")
 	private String numDocumento;
-	
+
 	@Column(name = "valor_documento")
 	private BigDecimal valorDocumento;
-	
+
 	@Column(name = "url_documento")
 	private String urlDocumento;
-	
+
 	@Column(name = "nome_fornecedor")
 	private String nomeFornecedor;
-	
+
 	@Column(name = "cnpj_cpf_fornecedor")
 	private String cnpjCpfFornecedor;
-	
+
 	@Column(name = "valor_liquido")
 	private BigDecimal valorLiquido;
-	
+
 	@Column(name = "valor_glosa")
 	private BigDecimal valorGlosa;
-	
+
 	@Column(name = "num_ressarcimento")
 	private String numRessarcimento;
-	
+
 	@Column(name = "cod_lote")
 	private Long codLote;
-	
+
 	@Column(name = "parcela")
 	private Integer parcela;
-	
+
 	@OneToOne
 	private Deputado deputado;
+
 }
